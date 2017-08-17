@@ -1,10 +1,12 @@
 $(function() {
   $("#files").change(function() {
-    if (this.files && this.files[0]) {
-      for (var i = 0; i < this.files.length; i++) {
+    var files = Array.prototype.slice.call(this.files);
+    files.sort();
+    if (files && files[0]) {
+      for (var i = 0; i < files.length; i++) {
         var reader = new FileReader();
         reader.onload = imagesIsLoaded;
-        reader.readAsDataURL(this.files[i]);
+        reader.readAsDataURL(files[i]);
       }
     }
   });

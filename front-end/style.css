@@ -1,14 +1,14 @@
 .input-images {
   margin: 10px;
 }
+.images {
+  white-space: nowrap;
+}
+#selected-image img {
+  height: 500px;
+  display: inline-block;
+}
 
-#selected-image {
-  display: inline-flex;
-}
-.stitching {
-  width: 960px;
-  margin: 0 auto;
-}
 .stitching__section-upload {
   margin: 10px;
 }
