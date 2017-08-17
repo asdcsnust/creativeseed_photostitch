@@ -1,0 +1,101 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Socket.io Photo-stitch Example</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jquery-form/form@4.2.2/dist/jquery.form.min.js" integrity="sha384-FzT3vTVGXqf7wRfy8k4BiyzvbNfeYjK+frTVqZeNDFl8woCbF0CYG6g2fMEFFo/i" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="load-image.js"></script>
+</head>
+
+<body>
+    <main class="stitching">
+        <section class="stitching__section">
+            <header class="stitching__section-header">
+                <span class="title"><h2>Image Stitching</h2></span>
+            </header>
+
+            <div class="stitching__section-images">
+
+                <form id="image_upload" class="form-inline" action="/api/photo" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <div class="input-images">
+                            <i class="fa fa-file-image-o fa-lg"></i>
+                            <input type="file" id="userPhoto" name="userPhoto" multiple />
+                        </div>
+                        <div class="uploading" style="display:none;">
+                            <label>&nbsp;</label>
+                            <img src="/uploading.gif" alt="uploading......" />
+                        </div>
+                </form>
+                <div class="images">
+                    <div id="selected-image"></div>
+                </div>
+                </div>
+                <div class="stitching__section-upload">
+                    <i class="fa fa-cloud-upload"></i>
+                </div>
+        </section>
+        <div id="chatLogs"></div>
+        <div id="stitched_image"></div>
+    </main>
+    <!--
+    <form id ="image_upload" class="form-inline" action="/api/photo" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <input type="file" id ="input_files" name="userPhoto" multiple/>
+      </div>
+      <div class="uploading" style="display:none;">
+        <label>&nbsp;</label>
+        <img src="/uploading.gif" alt="uploading......"/>
+      </div>  
+    </form>
+    <button id = "submit" class="btn btn-primary">submit</button>
+    <div id="chatLogs"></div>
+    <div id="stitched_image"></div>
+  </div>
+  -->
+
+    <script>
+        var socket = io();
+        socket.on("connected", function(data) {
+            alert(data.msg);
+        });
+        socket.on("logs", function(data) {
+            $("#chatLogs").append("<div>" + data.msg + "</div>");
+        });
+        socket.on("imgsrc", function(data) {
+            console.log(data);
+            $("#chatLogs").append("<hr/>");
+            $("#stitched_image").append("<hr/>");
+            $("#stitched_image").append("<img height='700px'src='" + data.msg + "'/>");
+        });
+        $(document).ready(function() {
+            $("#input_files").change(function() {
+                var files = Array.prototype.slice.call(this.files);
+                files.sort();
+                console.log(files);
+            });
+            $(".fa-cloud-upload").click(function(e) {
+                console.log("clicked!");
+                e.stopPropagation();
+                $("#image_upload").ajaxForm({
+                    beforeSubmit: function(e) {
+                        $(".uploading").show();
+                    },
+                    success: function(e) {
+                        $(".uploading").hide();
+                    },
+                    error: function(e) {}
+                }).submit();
+            });
+        });
+    </script>
+</body>
+
+</html>
